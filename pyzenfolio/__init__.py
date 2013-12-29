@@ -5,6 +5,7 @@ __author__ = 'Miroslav Shubernetskiy'
 
 try:
     from .api import PyZenfolio
+    from .exceptions import APIError
     from .helpers import search_sets_by_title
 except ImportError:
     pass

@@ -161,13 +161,13 @@ class PyZenfolio(object):
                                 for c in cookies.items()])
         return self.call('CreateVideoFromUrl', [photoset_id, url, cookies])
 
-    def UploadPhoto(self, photoset, path):
+    def UploadPhoto(self, photoset, path, filename=None):
         assert_type(photoset, 'PhotoSet', 'photoset', 'UploadPhoto')
         upload_url = photoset.UploadUrl
 
         with open(path, 'rb') as fid:
             data = fid.read()
-            filename = os.path.basename(path)
+            filename = filename or os.path.basename(path)
 
             headers = self.get_request_headers()
             headers.update({
@@ -396,9 +396,12 @@ class PyZenfolio(object):
             'id': randint(0, 2 ** 16 - 1)
         })
 
-        request = requests.post(API_ENDPOINT,
-                                data=json.dumps(data),
-                                headers=self.get_request_headers())
+        try:
+            request = requests.post(API_ENDPOINT,
+                                    data=json.dumps(data),
+                                    headers=self.get_request_headers())
+        except Exception as e:
+            raise APIError(e.message)
         if request.status_code != 200:
             raise HTTPError(API_ENDPOINT,
                             request.status_code,

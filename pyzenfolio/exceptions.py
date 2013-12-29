@@ -21,3 +21,4 @@ class HTTPError(APIError):
         self.status_code = status_code
         self.headers = headers
         self.content = content
+        self.message = 'HTTP Error: {0} - {1}'.format(status_code, url)
