@@ -1,0 +1,9 @@
+*.pyc
+*.orig
+*~
+.idea
+dist
+*egg*
+*.json
+*.jpg
+*.png
