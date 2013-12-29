@@ -5,7 +5,7 @@ from pyzenfolio import __version__, __author__
 
 
 def get_packages(package):
-    return [dirpath
+    return [str(dirpath)
             for dirpath, dirnames, filenames in os.walk(package)
             if os.path.exists(os.path.join(dirpath, '__init__.py'))]
 
@@ -37,7 +37,6 @@ setup(
     keywords="zenfolio",
     url="https://github.com/miki725/pyzenfolio",
     packages=get_packages('pyzenfolio'),
-    data_files=get_package_data('pyzenfolio'),
     install_requires=[
         'requests',
         'six',
