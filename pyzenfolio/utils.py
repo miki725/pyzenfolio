@@ -1,7 +1,26 @@
 from __future__ import unicode_literals, print_function
 import six
 from datetime import datetime
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.poolmanager import PoolManager
 from .constants import DATETIME_FORMAT
+
+
+class SSLAdapter(HTTPAdapter):
+    """
+    An HTTPS Transport Adapter that uses an arbitrary SSL version.
+    https://lukasa.co.uk/2013/01/Choosing_SSL_Version_In_Requests/
+    """
+
+    def __init__(self, ssl_version=None, **kwargs):
+        self.ssl_version = ssl_version
+        super(SSLAdapter, self).__init__(**kwargs)
+
+    def init_poolmanager(self, connections, maxsize, block=False):
+        self.poolmanager = PoolManager(num_pools=connections,
+                                       maxsize=maxsize,
+                                       block=block,
+                                       ssl_version=self.ssl_version)
 
 
 class AttrDict(dict):

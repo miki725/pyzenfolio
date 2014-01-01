@@ -6,20 +6,21 @@ import requests
 import urllib
 from hashlib import sha256
 from random import randint
-from .constants import API_ENDPOINT, REQUEST_HEADERS, DEFAULT_OBJECTS
+from .constants import API_ENDPOINT, REQUEST_HEADERS, DEFAULT_OBJECTS, DEFAULT_CONFIG
 from .exceptions import APIError, ConfigError, HTTPError, ZenfolioError
-from .utils import AttrDict, convert_to_datetime, convert_from_datetime
+from .utils import AttrDict, convert_to_datetime, convert_from_datetime, SSLAdapter
 from .validate import validate_value, validate_object, assert_type
 
 
 class PyZenfolio(object):
     def __init__(self, config_file=None, auth=None):
-        self.config = AttrDict({})
+        self.config = AttrDict(DEFAULT_CONFIG)
         if config_file:
-            self.config = self.get_config(config_file)
+            self.config.update(self.get_config(config_file))
             self.auth = self.config.auth
         if auth:
             self.auth = AttrDict(auth)
+        self.init_session()
 
     # ---------------------------------------------------------------#
     #                      Authentication                            #
@@ -384,6 +385,11 @@ class PyZenfolio(object):
             })
         return headers
 
+    def init_session(self):
+        self.adapter = SSLAdapter(self.config.ssl_type)
+        self.session = requests.Session()
+        self.session.mount('https://', self.adapter)
+
     def call(self, method, params=None):
         if params is None:
             params = []
@@ -397,9 +403,9 @@ class PyZenfolio(object):
         })
 
         try:
-            request = requests.post(API_ENDPOINT,
-                                    data=json.dumps(data),
-                                    headers=self.get_request_headers())
+            request = self.session.post(API_ENDPOINT,
+                                        data=json.dumps(data),
+                                        headers=self.get_request_headers())
         except Exception as e:
             raise APIError(e.message)
         if request.status_code != 200:
