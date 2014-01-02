@@ -92,7 +92,7 @@ class PyZenfolio(object):
 
     def LoadGroup(self, id, info_level='Full', recursive=False):
         validate_value(info_level, 'InformationLevel', 'LoadGroup')
-        return self.call('LoadGroupHierarchy', [id, info_level, recursive])
+        return self.call('LoadGroup', [id, info_level, recursive])
 
     def LoadGroupHierarchy(self, username=None):
         if username is None:
@@ -112,7 +112,7 @@ class PyZenfolio(object):
 
     def LoadPhotoSet(self, set_id, info_level='Full', with_photos=True):
         validate_value(info_level, 'InformationLevel', 'LoadPhotoSet')
-        return self.call('LoadPhoto', [set_id, info_level, with_photos])
+        return self.call('LoadPhotoSet', [set_id, info_level, with_photos])
 
     def LoadPhotoSetPhotos(self, set_id, start_index=0, limit=5000):
         return self.call('LoadPhotoSetPhotos', [set_id, start_index, limit])
@@ -272,7 +272,7 @@ class PyZenfolio(object):
         return self.call('MovePhoto', [photoset_id, photo_id, dest_photoset_id, index])
 
     def MovePhotos(self, photoset_id, dest_photoset_id, ids):
-        return self.call('MovePhoto', [photoset_id, dest_photoset_id, ids])
+        return self.call('MovePhotos', [photoset_id, dest_photoset_id, ids])
 
     def MovePhotoSet(self, photoset_id, dest_group_id, index):
         return self.call('MovePhotoSet', [photoset_id, dest_group_id, index])
@@ -345,7 +345,7 @@ class PyZenfolio(object):
 
     def ReorderGroup(self, group_id, order):
         validate_value(order, 'GroupShiftOrder', 'ReorderGroup')
-        return self.call('RemovePhotoSetTitlePhoto', [group_id, order])
+        return self.call('ReorderGroup', [group_id, order])
 
     def ReorderPhotoSet(self, photoset_id, order):
         validate_value(order, 'ShiftOrder', 'ReorderPhotoSet')
