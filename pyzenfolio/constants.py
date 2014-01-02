@@ -1,9 +1,13 @@
 from __future__ import unicode_literals, print_function
+import ssl
 
 
 API_VERSION = '1.7'
 API_ENDPOINT_FORMAT = 'https://api.zenfolio.com/api/{0}/zfapi.asmx'
 API_ENDPOINT = API_ENDPOINT_FORMAT.format(API_VERSION)
+DEFAULT_CONFIG = {
+    'ssl_type': ssl.PROTOCOL_TLSv1,
+}
 REQUEST_HEADERS = {
     'Content-Type': 'application/json',
 }
