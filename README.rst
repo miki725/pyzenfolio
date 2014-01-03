@@ -48,3 +48,9 @@ Example
 
     This is a beta release. Please report bugs via GitHub issues.
 
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/miki725/pyzenfolio/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
