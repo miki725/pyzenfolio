@@ -1,15 +1,23 @@
-from __future__ import unicode_literals, print_function
+from __future__ import print_function, unicode_literals
 import json
-import os
 import mimetypes
-import requests
+import os
 import urllib
 from hashlib import sha256
 from random import randint
-from .constants import API_ENDPOINT, REQUEST_HEADERS, DEFAULT_OBJECTS, DEFAULT_CONFIG
+
+import requests
+import six
+
+from .constants import (
+    API_ENDPOINT,
+    DEFAULT_CONFIG,
+    DEFAULT_OBJECTS,
+    REQUEST_HEADERS,
+)
 from .exceptions import APIError, ConfigError, HTTPError, ZenfolioError
-from .utils import AttrDict, convert_to_datetime, convert_from_datetime, SSLAdapter
-from .validate import validate_value, validate_object, assert_type
+from .utils import AttrDict, convert_from_datetime, convert_to_datetime
+from .validate import assert_type, validate_object, validate_value
 
 
 class PyZenfolio(object):
@@ -31,15 +39,16 @@ class PyZenfolio(object):
             return
 
         _challenge = self.GetChallenge()
-        salt = b''.join(map(chr, _challenge.PasswordSalt))
-        challenge = b''.join(map(chr, _challenge.Challenge))
+        salt = b''.join(map(six.int2byte, _challenge.PasswordSalt))
+        challenge = b''.join(map(six.int2byte, _challenge.Challenge))
 
         password_hash = sha256(salt + self.auth.password.encode('utf-8')).digest()
         proof = sha256(challenge + password_hash).digest()
-        proof_as_ints = map(ord, proof)
+        proof_as_ints = list(six.iterbytes(proof))
 
         token = self.call('Authenticate', [_challenge.Challenge, proof_as_ints])
         self.auth.token = token
+        return token
 
     def GetChallenge(self):
         return self.call('GetChallenge', self.auth.username)
@@ -172,7 +181,7 @@ class PyZenfolio(object):
 
             headers = self.get_request_headers()
             headers.update({
-                'Content-Type': mimetypes.guess_type(filename),
+                'Content-Type': mimetypes.guess_type(filename)[0],
             })
             params = {
                 'filename': filename,
@@ -386,9 +395,7 @@ class PyZenfolio(object):
         return headers
 
     def init_session(self):
-        self.adapter = SSLAdapter(self.config.ssl_type)
         self.session = requests.Session()
-        self.session.mount('https://', self.adapter)
 
     def call(self, method, params=None):
         if params is None:
