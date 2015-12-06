@@ -1,7 +1,7 @@
 from __future__ import print_function, unicode_literals
 
 
-__version__ = 0.9
+__version__ = '0.9.1'
 __author__ = 'Miroslav Shubernetskiy'
 
 try:
